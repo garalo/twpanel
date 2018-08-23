@@ -1,0 +1,7 @@
+<h1>Hello! welcome to my app</h1>
+
+<% if @uname %>
+  <a href='/auth/twitter/logout'>Log out <%= @uname %></a>
+<% else %>
+  <a href='/auth/twitter'> Log in with Twitter </a>
+<% end %>
