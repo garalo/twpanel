@@ -1,68 +1,72 @@
-require 'sinatra'
-require 'sinatra/reloader'
-require 'omniauth-twitter'
-require 'twitter'
+# coding: utf-8
 
-set :session_secret, 'secret12344321secret'
+require 'sinatra'
+require 'twitter'
+require 'omniauth-twitter'
+require 'json'
+require 'dotenv'
+require './src/twidiary'
+
+Dotenv.load
+
+set :server, :thin
+set :session_secret, DateTime.now.to_s
+
+twidiary = TwiDiary.new
 
 configure do
   enable :sessions
-  
   use OmniAuth::Builder do
-    #_ak_adem için keys for heroku
-    provider :twitter, '1TEwFFzAyfDGoqKgs1kenF6Nh', 'IDUcFEFaN9J9eFgQBLCYfQ9R1bvfvgUyfROG4uMzI2MmoRNCtm', callback_url: "http://127.0.0.1:4567/auth/twitter/callback" # use ENV variables instead :)
-    #_siyahgolge icin keys for local
-    #provider :twitter, 'FMY49JTN57AiLxqtgbE4push7', 'MSv1ZdYRAJoq6RDcKGIEftqWtxrDoxntEQAj2l5dif7LVrrorp'
- end
+    provider :twitter, ENV['TWITTER_CONSUMER_KEY'], ENV['TWITTER_CONSUMER_SECRET']
+  end
 end
 
-
-def twitter
-    Twitter::REST::Client.new do |config|
-      config.consumer_key        = session[:consumer_key]
-      config.consumer_secret     = session[:consumer_secret]
-      config.access_token        = session[:access_token] 
-      config.access_token_secret = session[:access_token_secret]
-    end
+helpers do
+  def logged_in?
+    session[:twitter_oauth]
   end
 
+  def twitter
+    Twitter::REST::Client.new do |config|
+      config.consumer_key = ENV['TWITTER_CONSUMER_KEY']
+      config.consumer_secret = ENV['TWITTER_CONSUMER_SECRET']
+      config.access_token = session[:twitter_oauth][:token]
+      config.access_token_secret = session[:twitter_oauth][:secret]
+    end
+  end
+end
 
+before do
+  pass if request.path_info =~ /^\/auth\//
+  redirect to('/auth/twitter') unless logged_in?
+end
 
-get '/' do
-  @uname = session[:uname]
- # @image = session[:image]
-  @screen_name = session[:screen_name]
-  @consumer_key = session[:consumer_key]
-  @consumer_secret = session[:consumer_secret]
-  @access_token = session[:access_token] 
-  @access_token_secret = session[:access_token_secret]
-  
-  # @oauth = session[:twitter_oauth]
-  @timeline = twitter.home_timeline
-  
-  
-  #@timeline = twitter.user_timeline(@uname, { count: 10 })
-  
-  erb :index
+get '/auth/failure' do
 end
 
 get '/auth/twitter/callback' do
- # session[:twitter_oauth] = env['omniauth.auth'][:credentials]
-  session[:uname] = env['omniauth.auth']['extra']['raw_info']['screen_name']
-  #session[:image] = env['omniauth.auth']['info']['image']
-  session[:screen_name] = env['omniauth.auth']['extra']['raw_info']['name']
-  session[:consumer_key] = env['omniauth.auth']['extra']['access_token'].consumer.key
-  session[:consumer_secret] = env['omniauth.auth']['extra']['access_token'].consumer.secret
-  session[:access_token] = env['omniauth.auth']['extra']['access_token'].params[:oauth_token]
-  session[:access_token_secret] = env['omniauth.auth']['extra']['access_token'].params[:oauth_token_secret]
-  
-  redirect '/'
+  session[:twitter_oauth] = env['omniauth.auth'][:credentials]
+  redirect to('/')
 end
 
-get '/auth/twitter/logout' do
-    #session.each_value do |value|
-    #    value = nil
-    # end
-  session.clear 
-  redirect '/'
+get '/' do
+  @oauth = session[:twitter_oauth]
+  #@timeline = twitter.home_timeline
+  @user = twitter.user
+  @tweets = twitter.user_timeline(@user, { count: 300 })
+  @groupedtweets = twidiary.group_by_month(@tweets)
+  erb :index
+end
+
+get '/timeline' do
+  @oauth = session[:twitter_oauth]
+  @timeline = twitter.home_timeline
+  @user = twitter.user
+  erb :tline
+end
+
+
+get '/logout' do
+  session.clear
+  redirect to('/')
 end
