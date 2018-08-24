@@ -1,7 +1,28 @@
-<h1>Hello! welcome to my app</h1>
+<h1>Kolay Rt ve Fav. Programı.</h1>
 
 <% if @uname %>
-  <a href='/auth/twitter/logout'>Log out <%= @uname %></a>
+    <a href='/auth/twitter/logout'> <%= @uname %>  Çıkış yapınız</a> 
+ <p>  <%= @screen_name %>  hoşgeldiniz. </p>
+ <p> Giriş bilgileriniz aşağıda şifrelenmiştir.
+ Yine de siz bu bilgilerinizi kimseyle paylaşmayınız. </p>
+ <p> <%= @consumer_key  %> </p>
+ <p> <%= @consumer_secret %> </p>
+ <p> <%= @access_token %> </p>
+ <p> <%= @access_token_secret %> </p>
+  
 <% else %>
-  <a href='/auth/twitter'> Log in with Twitter </a>
+  <a href='/auth/twitter'> Twitter ile giriş yapın </a>
 <% end %>
+
+    <pre><!--%= JSON.pretty_generate(@oauth) %--></pre>
+<hr/>
+
+<h2>Home Timeline</h2>
+ 
+ <% @timeline.each do |tweet| %>
+      
+      <p><%= tweet.text %> by @<%= tweet.user.screen_name %></p>
+      <pre><%= JSON.pretty_generate(tweet.attrs) %></pre>
+    <% end %>
+  </body>
+
