@@ -9,17 +9,19 @@
     <h2>Access Token</h2>
     <pre><%= JSON.pretty_generate(@oauth) %></pre>
     <hr/>
-    <h3> <a href="/timeline">Takip Ettiklerinin Twitlerine Git</a> </h3>
-    <h1> Twit Günlüğün </h1>
+   <h3> <a href="/timeline">Takip Ettiklerinin Twitlerine Git</a> </h3>
+    <h3> <a href="/tagdestek">Tag Destek Sayfasına Git</a> </h3>
+    <h3> <a href="/kisifav">Kişiye Destek Sayfasına Git</a> </h3>
+    <h1> Giriş Bilgilerin Twitlerin </h1>
     <hr/>
-    <h2><img src=<%= @user.profile_image_url %> /> <%= @user.name %> twitlerin</h2>
+    <h2><img src=<%= @user.profile_image_url %> /> <%= @user.name %> yazdığın twitlerin</h2>
     <br/>
     <% @groupedtweets.each do |groupedtweet| %>
       <h3><%= groupedtweet[0] %></h3>
       <% groupedtweet[1].each do |tweet| %>
         <p><%= tweet.created_at.getlocal.strftime("%F %T") %></p>
         <p><%=  tweet.text %> <a href="<%= tweet.url %>"> <%= tweet.url %></a> </p>
-        <pre><%= JSON.pretty_generate(tweet.attrs) %></pre>
+        <pre>!<!--%= JSON.pretty_generate(tweet.attrs) %--></pre>
       <% end %>
     <% end %>
   </body>
