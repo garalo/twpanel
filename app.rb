@@ -58,7 +58,7 @@ get '/' do
   @oauth = session[:twitter_oauth]
   #@timeline = twitter.home_timeline
   @user = twitter.user
-  @tweets = twitter.user_timeline(@user, { count: 300 })
+  @tweets = twitter.user_timeline(@user, { count: 100 })
   @groupedtweets = twidiary.group_by_month(@tweets)
   erb :index
 end
@@ -76,8 +76,6 @@ get '/logout' do
   redirect to('/')
 end
 
-
-
 get '/kisifav' do
   erb :kisifav
 end
@@ -87,7 +85,7 @@ post '/kisifav' do
   @no = params[:no]
     # burası kendi user_timeline'ı veriyor. aradığın kişinin değil.
     #twitter.user_timeline(params[:q].to_s, { count: params[:no].to_i }, exclude: "retweets").each do |tweet|
-      twitter.search("from:#{@kisi .to_s}").take(params[:no].to_i).each do |tweet|  
+      twitter.search("from:#{@kisi.to_s}").take(params[:no].to_i).each do |tweet|  
         begin
          # logger.info "Kimden : #{tweet.user.screen_name}: ====>>> #{tweet.text}"
          # logger.info "URL : #{tweet.url}"
@@ -106,6 +104,38 @@ post '/kisifav' do
       end
 
   erb :kisifavsonuc
+end
+
+
+
+get '/kisirt' do
+  erb :kisirt
+end
+
+post '/kisirt' do
+  @kisi = params[:q]
+  @no = params[:no]
+    # burası kendi user_timeline'ı veriyor. aradığın kişinin değil.
+    #twitter.user_timeline(params[:q].to_s, { count: params[:no].to_i }, exclude: "retweets").each do |tweet|
+      twitter.search("from:#{@kisi.to_s}").take(params[:no].to_i).each do |tweet|  
+        begin
+         # logger.info "Kimden : #{tweet.user.screen_name}: ====>>> #{tweet.text}"
+         # logger.info "URL : #{tweet.url}"
+          twitter.retweet(tweet)
+           rescue Twitter::Error::Forbidden
+          begin
+           next if twitter.retweet(tweet)
+          rescue Twitter::Error::Forbidden
+            # either retweet or unretweet failed and there's no way to proceed
+          end
+          rescue Twitter::Error::Unauthorized => e
+           logger.info "Unauthorized access"
+          rescue => e
+        end
+        #sleep 3
+      end
+
+  erb :kisirtsonuc
 end
 
 get '/tagdestek' do
