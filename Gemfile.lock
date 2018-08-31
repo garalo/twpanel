@@ -100,7 +100,6 @@ DEPENDENCIES
   dotenv
   omniauth
   omniauth-twitter
-  rack
   rspec
   sinatra
   thin
