@@ -4,21 +4,18 @@
     <meta charset="UTF-8">
   </head>
   <body>
-     <h3><a href="/logout">Logout</a></h3>
-    <h3> <a href="/timeline">Takip Ettiklerinin Twitleri</a> </h3>
-    <h3> <a href="/tagdestek">Tag Destek Sayfası</a> </h3>
-    <h3> <a href="/kisifav">Kişiye FAV Destek Sayfası</a> </h3>
-     <h3> <a href="/kisirt">Kişiye RT Destek Sayfası</a> </h3>
-    <h1> Giriş Bilgilerin ve Twitlerin </h1>
-    <h3>Twitter'e bağlantı şifrelerin(Bunu sizden başka kimse göremez, söylemeyin ve göstermeyin) </h3>
-    <pre><%= JSON.pretty_generate(@oauth) %></pre>
+  <div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h5 class="display-7"><img src=<%= @user.profile_image_url %> /> <%= @user.name %> Hoş Geldin</h5>
+   </div>
+</div>
+  
+    <h5> Aylara Göre Tiwitleriniz</h5>
     <hr/>
-    <h2><img src=<%= @user.profile_image_url %> /> <%= @user.name %> yazdığın twitlerin</h2>
-    <br/>
     <% @groupedtweets.each do |groupedtweet| %>
       <h3><%= groupedtweet[0] %></h3>
       <% groupedtweet[1].each do |tweet| %>
-        <p><%= tweet.created_at.getlocal.strftime("%F %T") %></p>
+        <%= tweet.created_at.getlocal.strftime("%F %T") %>
         <p><%=  tweet.text %> <a href="<%= tweet.url %>"> <%= tweet.url %></a> </p>
         <pre><!--%= JSON.pretty_generate(tweet.attrs) %--></pre>
       <% end %>

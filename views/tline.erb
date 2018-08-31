@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
   </head>
   <body>
-    <a href="/logout">Logout</a><br/>
-     <a href="/">Ana sayfaya dön</a><br/>
-    <hr/>
+    
     <h2><img src=<%= @user.profile_image_url %> /> <%= @user.name %> twitlerin</h2>
-    <h2>Access Token</h2>
-    <pre><%= JSON.pretty_generate(@oauth) %></pre>
-    <hr/>
+    <!--h2>Access Token</h2-->
+    <pre><!--%= JSON.pretty_generate(@oauth) %--></pre>
     <h2>Home Timeline</h2>
+    <hr/>
     <% @timeline.each do |tweet| %>
       <p><%= tweet.text %> by @<%= tweet.user.screen_name %> <a href="<%= tweet.url %>"> <%= tweet.url %>  </a> </p>
        <pre><%= JSON.pretty_generate(tweet.attrs) %></pre>
