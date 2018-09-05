@@ -149,15 +149,15 @@ post '/kisirt' do
 end
 
 get '/unfollow' do
-
+begin
 following = twitter.friend_ids
 followers = twitter.follower_ids
-begin
+rescue Twitter::Error::TooManyRequests => error
+  sleep error.rate_limit.reset_in + 1
+  retry
+end
  @unfollower = following.to_a - followers.to_a
  @user = twitter.user
-rescue Twitter::Error, Timeout::Error => e
-  logger.info "Timeout out error"
-rescue => e
 =begin
 @unfollower.each do |user_id|
     user = twitter.user(user_id)

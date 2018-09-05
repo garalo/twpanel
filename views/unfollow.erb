@@ -7,5 +7,5 @@
     <hr/>
     <% @unfollower.each do |uf| %>
      <% user = twitter.user(uf) %>
-    <p>  Adı: <%= user.name %> Takipten Çık:  <a href="<%= user.url %>"> <%= user.name %>  </a> </p>
+    <p>  <a href="<%= user.url %>"> <%= user.name %> </a> Takipten Çık </p>
     <% end %>
