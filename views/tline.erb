@@ -1,18 +1,13 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-  </head>
-  <body>
-    
-    <h2><img src=<%= @user.profile_image_url %> /> <%= @user.name %> twitlerin</h2>
-    <!--h2>Access Token</h2-->
-    <pre><!--%= JSON.pretty_generate(@oauth) %--></pre>
-    <h2>Home Timeline</h2>
+
+    <h4>Home Timeline</h4>
     <hr/>
     <% @timeline.each do |tweet| %>
       <p><%= tweet.text %> by @<%= tweet.user.screen_name %> <a href="<%= tweet.url %>"> <%= tweet.url %>  </a> </p>
-       <pre><%= JSON.pretty_generate(tweet.attrs) %></pre>
+      <!--%= JSON.pretty_generate(tweet.attrs) %-->
+        <p > Twit Kaynağı: <%= tweet.source %> 
+         Takipçi Sayısı: <%= tweet.user.followers_count %> 
+         Arkadaş Sayısı: <%= tweet.user.friends_count %>
+        </p>
+        <hr/>
     <% end %>
-  </body>
-</html>
+ 

@@ -36,6 +36,10 @@ helpers do
     twitter.user.name 
   end
 
+  def upicture
+    twitter.user.profile_image_url
+  end
+
   def twitter
     Twitter::REST::Client.new do |config|
       config.consumer_key = ENV['TWITTER_CONSUMER_KEY']
@@ -63,14 +67,14 @@ get '/' do
   @oauth = session[:twitter_oauth]
   #@timeline = twitter.home_timeline
   @user = twitter.user
-  @tweets = twitter.user_timeline(@user, { count: 100 })
+  @tweets = twitter.user_timeline(@user, { count: 100 })  
   @groupedtweets = twidiary.group_by_month(@tweets)
   erb :index
 end
 
 get '/timeline' do
   @oauth = session[:twitter_oauth]
-  @timeline = twitter.home_timeline
+  @timeline = twitter.home_timeline 
   @user = twitter.user
   erb :tline
 end
@@ -94,9 +98,10 @@ post '/kisifav' do
         begin
          # logger.info "Kimden : #{tweet.user.screen_name}: ====>>> #{tweet.text}"
          # logger.info "URL : #{tweet.url}"
-          twitter.favorite(tweet)
+          twitter.favorite(tweet) unless tweet.text[0..3].include? "RT @"  # ignore retweets
            rescue Twitter::Error::Forbidden
           begin
+            next if twitter.user.protected
             next if twitter.favorite(tweet)
           rescue Twitter::Error::Forbidden
             # either retweet or unretweet failed and there's no way to proceed
@@ -111,8 +116,6 @@ post '/kisifav' do
   erb :kisifavsonuc
 end
 
-
-
 get '/kisirt' do
   erb :kisirt
 end
@@ -126,9 +129,11 @@ post '/kisirt' do
         begin
          # logger.info "Kimden : #{tweet.user.screen_name}: ====>>> #{tweet.text}"
          # logger.info "URL : #{tweet.url}"
-          twitter.retweet(tweet)
+          #unless object.text[0..3].include? "RT @"  # ignore retweets
+          twitter.retweet(tweet)  unless tweet.text[0..3].include? "RT @"  # ignore retweets
            rescue Twitter::Error::Forbidden
           begin
+           next if twitter.user.protected
            next if twitter.retweet(tweet)
           rescue Twitter::Error::Forbidden
             # either retweet or unretweet failed and there's no way to proceed
@@ -141,6 +146,24 @@ post '/kisirt' do
       end
 
   erb :kisirtsonuc
+end
+
+get '/unfollow' do
+
+following = twitter.friend_ids
+followers = twitter.follower_ids
+@unfollower = following.to_a - followers.to_a
+@user = twitter.user
+=begin
+@unfollower.each do |user_id|
+    user = twitter.user(user_id)
+    puts user.url
+    puts "#{user.name} follows #{user.friends_count}" +
+         " and has #{user.followers_count} followers."
+end
+=end
+
+  erb :unfollow
 end
 
 get '/tagdestek' do
@@ -159,6 +182,7 @@ post '/tagdestek' do
           twitter.retweet(tweet)
            rescue Twitter::Error::Forbidden
           begin
+            next if twitter.user.protected
             next if twitter.favorite(tweet)
             next if twitter.retweet(tweet)
           rescue Twitter::Error::Forbidden

@@ -4,16 +4,13 @@
     <meta charset="UTF-8">
   </head>
   <body>
-  <div class="jumbotron jumbotron-fluid">
-  <div class="container">
-    <h5 class="display-7"><img src=<%= @user.profile_image_url %> /> <%= @user.name %> Hoş Geldin</h5>
-   </div>
-</div>
-  
-    <h5> Aylara Göre Tiwitleriniz</h5>
+    <br/>
+     <p>Takip Kontrol analizi, Takipçi sayınızın büyüklüğüne göre 1dk kadar zaman tutuyor. Biraz sabırlı olunuz</p>
+    <br/>
+    <h5> Aylara Göre Sıralı Tiwitleriniz</h5>
     <hr/>
     <% @groupedtweets.each do |groupedtweet| %>
-      <h3><%= groupedtweet[0] %></h3>
+      <h3><%= groupedtweet[0] %> Ay</h3>
       <% groupedtweet[1].each do |tweet| %>
         <%= tweet.created_at.getlocal.strftime("%F %T") %>
         <p><%=  tweet.text %> <a href="<%= tweet.url %>"> <%= tweet.url %></a> </p>
