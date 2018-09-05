@@ -152,8 +152,12 @@ get '/unfollow' do
 
 following = twitter.friend_ids
 followers = twitter.follower_ids
-@unfollower = following.to_a - followers.to_a
-@user = twitter.user
+begin
+ @unfollower = following.to_a - followers.to_a
+ @user = twitter.user
+rescue Twitter::Error, Timeout::Error => e
+  logger.info "Timeout out error"
+rescue => e
 =begin
 @unfollower.each do |user_id|
     user = twitter.user(user_id)
