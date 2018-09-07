@@ -1,3 +1,12 @@
 
 <br/>
-<p>Girmiş olduğunuz twitter hesabı <%= @kisi %>  için  <%= @no %>  kez FAV desteği sağlandı " </p>
+<p>Girmiş olduğunuz twitter hesabı <%= @kisi %>  için  <%= @no %>  kez FAV desteği sağlandı </p>
+
+<br/>
+ <h4><%= @kisi %> için FAV sonuçları </h4>
+  <hr/>
+ <% @kfav.each do |tweet| %>
+      <p><%= tweet.status.text %> by @<%= tweet.attrs[:screen_name] %> 
+      <a href="<%= tweet.status.url %>"> <%= tweet.status.url %>  </a> </p>
+ <hr/>
+ <% end %>

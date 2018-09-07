@@ -94,7 +94,7 @@ post '/kisifav' do
   @no = params[:no]
     # burası kendi user_timeline'ı veriyor. aradığın kişinin değil.
     #twitter.user_timeline(params[:q].to_s, { count: params[:no].to_i }, exclude: "retweets").each do |tweet|
-      twitter.search("from:#{@kisi.to_s}").take(params[:no].to_i).each do |tweet|  
+     @kfav = twitter.search("from:#{@kisi.to_s}").take(params[:no].to_i).each do |tweet|  
         begin
          # logger.info "Kimden : #{tweet.user.screen_name}: ====>>> #{tweet.text}"
          # logger.info "URL : #{tweet.url}"
@@ -169,6 +169,62 @@ end
 
   erb :unfollow
 end
+
+get '/listrt' do
+  erb :listrt
+end
+
+post '/listrt' do
+
+  @kisi = params[:isim]
+  @liste = params[:liste]
+  @no = params[:no]
+
+      #ihsanemirgazili
+      #grup-devri-l-le-fav
+      @lst = twitter.list_members(@kisi.to_s,  @liste.to_s).take(@no.to_i).each do |list| 
+       
+        #logger.info "Kimden : #{list.status.url}"
+        # puts list.status.text
+         
+         twitter.retweet(list.status.id) unless list.status.text[0..3].include? "RT @" and list.nil? # ignore retweets  
+         begin
+          next if twitter.user.protected?
+          next if twitter.retweet(list.status.id)
+         rescue Twitter::Error::Forbidden
+       end
+        
+      end
+  erb :listrtsonuc
+end
+
+
+get '/listfav' do
+  erb :listfav
+end
+
+post '/listfav' do
+
+  @kisi = params[:isim]
+  @liste = params[:liste]
+  @no = params[:no]
+
+     @lst = twitter.list_members(@kisi.to_s,  @liste.to_s).take(@no.to_i).each do |list| 
+         #logger.info "Kimden : #{list.status.url}"
+         twitter.favorite(list.status.id) unless list.status.text[0..3].include? "RT @" and list.nil? # ignore retweets  
+         begin
+           next if twitter.user.protected?
+           next if twitter.favorite(list.status.id)
+          rescue Twitter::Error::Forbidden
+        end
+         #puts JSON.pretty_generate(list.attrs)
+        
+      end
+
+
+  erb :listfavsonuc
+end
+
 
 get '/tagdestek' do
   erb :tagdestek

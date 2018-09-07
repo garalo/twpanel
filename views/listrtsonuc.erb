@@ -1,0 +1,11 @@
+
+<br/>
+<p>Girmiş olduğunuz <%= @kisi %> kişinin <%= @liste %> isimli listeye <%= @no %>  kez RT desteği sağlandı </p>
+<br/>
+ <h4><%= @kisi %> <%= @liste %> Listesi RT sonuçları </h4>
+  <hr/>
+ <% @lst.each do |tweet| %>
+      <p><%= tweet.status.text %> by @<%= tweet.attrs[:screen_name] %> 
+      <a href="<%= tweet.status.url %>"> <%= tweet.status.url %>  </a> </p>
+ <hr/>
+ <% end %>
