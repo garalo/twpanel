@@ -66,7 +66,7 @@ end
 get '/' do
   @oauth = session[:twitter_oauth]
   #@timeline = twitter.home_timeline
-  @user = twitter.user
+  @user = username
   @tweets = twitter.user_timeline(@user, { count: 100 })  
   @groupedtweets = twidiary.group_by_month(@tweets)
   erb :index
@@ -89,6 +89,7 @@ get '/kisifav' do
   erb :kisifav
 end
 
+#client.user_search('sachin') olmalı
 post '/kisifav' do
   @kisi = params[:q]
   @no = params[:no]
@@ -120,12 +121,13 @@ get '/kisirt' do
   erb :kisirt
 end
 
+#client.user_search('sachin') olmalı
 post '/kisirt' do
   @kisi = params[:q]
   @no = params[:no]
     # burası kendi user_timeline'ı veriyor. aradığın kişinin değil.
     #twitter.user_timeline(params[:q].to_s, { count: params[:no].to_i }, exclude: "retweets").each do |tweet|
-      twitter.search("from:#{@kisi.to_s}").take(params[:no].to_i).each do |tweet|  
+    @krt =  twitter.search("from:#{@kisi.to_s}").take(params[:no].to_i).each do |tweet|  
         begin
          # logger.info "Kimden : #{tweet.user.screen_name}: ====>>> #{tweet.text}"
          # logger.info "URL : #{tweet.url}"
