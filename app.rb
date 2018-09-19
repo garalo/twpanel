@@ -18,11 +18,6 @@ configure do
   enable :sessions
 
   use OmniAuth::Builder do
-    #_ak_adem için keys for heroku
-    #provider :twitter, '1TEwFFzAyfDGoqKgs1kenF6Nh', 'IDUcFEFaN9J9eFgQBLCYfQ9R1bvfvgUyfROG4uMzI2MmoRNCtm', callback_url: "http://127.0.0.1:4567/auth/twitter/callback" # use ENV variables instead :)
-    #_siyahgolge icin keys for local
-    #provider :twitter, 'FMY49JTN57AiLxqtgbE4push7', 'MSv1ZdYRAJoq6RDcKGIEftqWtxrDoxntEQAj2l5dif7LVrrorp'
-   
     provider :twitter, ENV['TWITTER_CONSUMER_KEY'], ENV['TWITTER_CONSUMER_SECRET']
   end
 end
