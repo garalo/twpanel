@@ -1,11 +1,15 @@
 
     <h4>Takip Etmeyenler Listesi</h4>
-     <p>Aşağıdaki listeden elle tek tek  kontrol ederek takipten düşün  </p>
-     <p>Yada hiç uğraşmayın burdan hepsine PÜFFF deyiverin :)))  
-     ŞAKA ŞAKA ŞİMDİLİK SADECE ELLE :))) Daha yazmadım bu kısmı </p>
-    <p>  Takip etmeyen sayısı : <%= @unfollower.count %> </p>
+     <p>Aşağıdaki listeden elle tek tek  kontrol ederek takipten düşün.  </p>
+     <p>Yada hiç uğraşmayın  <a href="/ufffall">BURADAN</a> hepsine PÜFFF deyiverin :))) 
+     Sabırlı olun zaman tutuyor biraz. </p>
+    <p>Takip etmeyen sayısı :</p><h4><%= @unfollower.count %> </h4> 
     <hr/>
-    <% @unfollower.each do |uf| %>
-     <% user = twitter.user(uf) %>
-    <p>  <a href="<%= user.url %>"> <%= user.name %> </a> Takipten Çık </p>
-    <% end %>
+     <% if @unfollower.count > 0  %>
+        <% @unfollower.each do |uf| %>
+        <% user = twitter.user(uf) %>
+        <p>  <a href="<%= user.url %>"> <%= user.name %> </a> <== Takipten Çık  </p>
+        <% end %>
+     <% else %>
+        <p>  TERTEMİZ Mİ OLDU NE:)))</p>
+      <% end %>

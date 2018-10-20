@@ -154,18 +154,29 @@ rescue Twitter::Error::TooManyRequests => error
   retry
 end
  @unfollower = following.to_a - followers.to_a
- @user = twitter.user
-=begin
-@unfollower.each do |user_id|
-    user = twitter.user(user_id)
-    puts user.url
-    puts "#{user.name} follows #{user.friends_count}" +
-         " and has #{user.followers_count} followers."
-end
-=end
+  #@user = twitter.user
 
   erb :unfollow
 end
+
+
+get '/ufffall' do
+  begin
+  following = twitter.friend_ids
+  followers = twitter.follower_ids
+  rescue Twitter::Error::TooManyRequests => error
+    sleep error.rate_limit.reset_in + 1
+    retry
+  end
+   @unfollower = following.to_a - followers.to_a
+
+  @unfollower.each do |uf|
+    userid = twitter.user(uf) 
+      twitter.unfollow(userid)
+  end
+    erb :unfollow
+  end
+
 
 get '/listrt' do
   erb :listrt
