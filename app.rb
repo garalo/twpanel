@@ -80,6 +80,36 @@ get '/logout' do
   redirect to('/')
 end
 
+get '/gruprt' do
+  erb :gruprt
+end
+
+#client.user_search('sachin') olmalı
+post '/gruprt' do
+  @kisi = params[:q]
+  @no = params[:no]
+     @grt = twitter.search("from:#{@kisi.to_s}").take(params[:no].to_i).each do |tweet|  
+        begin
+          twitter.favorite(tweet)
+          twitter.retweet(tweet) 
+           rescue Twitter::Error::Forbidden
+          begin
+            next if twitter.user.protected?
+            next if twitter.favorite(tweet)
+            next if twitter.retweet(tweet)
+          rescue Twitter::Error::Forbidden
+            # either retweet or unretweet failed and there's no way to proceed
+          end
+          rescue Twitter::Error::Unauthorized => e
+           logger.info "Unauthorized access"
+          rescue => e
+        end
+        #sleep 3
+      end
+
+  erb :gruprtsonuc
+end
+
 get '/kisifav' do
   erb :kisifav
 end
@@ -97,7 +127,7 @@ post '/kisifav' do
           twitter.favorite(tweet) unless tweet.text[0..3].include? "RT @"  # ignore retweets
            rescue Twitter::Error::Forbidden
           begin
-            next if twitter.user.protected
+            next if twitter.user.protected?
             next if twitter.favorite(tweet)
           rescue Twitter::Error::Forbidden
             # either retweet or unretweet failed and there's no way to proceed
@@ -130,7 +160,7 @@ post '/kisirt' do
           twitter.retweet(tweet)  unless tweet.text[0..3].include? "RT @"  # ignore retweets
            rescue Twitter::Error::Forbidden
           begin
-           next if twitter.user.protected
+           next if twitter.user.protected?
            next if twitter.retweet(tweet)
           rescue Twitter::Error::Forbidden
             # either retweet or unretweet failed and there's no way to proceed
@@ -250,7 +280,7 @@ post '/tagdestek' do
           twitter.retweet(tweet)
            rescue Twitter::Error::Forbidden
           begin
-            next if twitter.user.protected
+            next if twitter.user.protected?
             next if twitter.favorite(tweet)
             next if twitter.retweet(tweet)
           rescue Twitter::Error::Forbidden
